@@ -8,7 +8,5 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Tomcat 8.5.54" level="application_server_libraries" />
-    <orderEntry type="library" name="mysql-connector-java-5.1.7-bin" level="project" />
-    <orderEntry type="library" name="mysql-connector-java-8.0.20" level="project" />
   </component>
 </module>

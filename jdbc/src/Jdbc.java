@@ -4,222 +4,152 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * @ Author: MaCode
+ * @ Date: 2020-06-13
+ * @ Github: HappyOnion801
+ */
 public class Jdbc {
 
+    private static String driverPackage = "com.mysql.cj.jdbc.Driver";
+    private static String url = "jdbc:mysql://localhost:3306/srm?useSSL=false&serverTimezone=UTC";
+    private static String user = "root";
+    private static String password = "123456";
+
     public static void main(String[] args) {
-        //testInsert();
-        testUpdate();
+//        insert();
+//        delete();
+//        update();
+        query();
     }
 
-    private static void testInsert() {
-        Connection connection = null;
-        PreparedStatement pstmt = null;
-        //1、注册驱动
+    private static Connection getMysqlConnection() {
+        Connection res;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            //2、获得连接,通过DriverManager获得连接
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/srm", "root", "123456");
-            //3、执行sql
-            //3.1 定义sql
-            String sql = "INSERT INTO people VALUES(null,?,?,?,?,?)";
-            //3.2 获得PreparedStatement
-            pstmt = connection.prepareStatement(sql);
-            //3.3设置参数
-            pstmt.setString(1, "猪八戒");
-            pstmt.setString(2, "1980-3-5");
-            pstmt.setString(3, "山东");
-            pstmt.setString(4, "男");
-            pstmt.setInt(5, 40);
-            //3.4执行sql,增删改用executeUpdate
-            int lines = pstmt.executeUpdate();//收影响的行数
-            if (lines > 0) {
-                System.out.println("插入成功");
-            } else {
-                System.out.println("插入失败");
-            }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
+            Class.forName(driverPackage);
+            res = DriverManager.getConnection(url, user, password);
+            return res;
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
-        } finally {
-            //4、释放资源
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                pstmt = null;
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                connection = null;
+        }
+        return null;
+    }
+
+    private static void insert() {
+        Connection connection = getMysqlConnection();
+        if (connection == null) {
+            System.out.println("数据库连接失败！");
+            return;
+        }
+        String sql = "INSERT INTO people VALUES(NULL,?,?,?,?,?)";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, "猪八戒");
+            ps.setString(2, "1980-3-5");
+            ps.setString(3, "山东");
+            ps.setString(4, "男");
+            ps.setInt(5, 40);
+            int lines = ps.executeUpdate();
+            ps.close();
+            connection.close();
+            System.out.println("插入成功！" + lines + "行受影响");
+            return;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("插入失败！");
+        }
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }
 
-    private static void testUpdate() {
-        Connection connection = null;
-        PreparedStatement pstmt = null;
-        //1、注册驱动
+    private static void delete() {
+        Connection connection = getMysqlConnection();
+        if (connection == null) {
+            System.out.println("数据库连接失败！");
+            return;
+        }
+        String sql = "DELETE FROM people WHERE name=?";
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            //2、获得连接,通过DriverManager获得连接
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/srm", "root", "123456");
-            //3、执行sql
-            //3.1 定义sql
-            String sql = "UPDATE people SET name=?,addr=? WHERE id=?";
-            //3.2 获得PreparedStatement
-            pstmt = connection.prepareStatement(sql);
-            //3.3设置参数
-            pstmt.setString(1, "沙僧");
-            pstmt.setString(2, "流沙河");
-            pstmt.setLong(3, 6);
-            //3.4执行sql,增删改用executeUpdate
-            int lines = pstmt.executeUpdate();//收影响的行数
-            if (lines > 0) {
-                System.out.println("更新成功");
-            } else {
-                System.out.println("更新失败");
-            }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, "猪八戒");
+            int lines = ps.executeUpdate();
+            ps.close();
+            connection.close();
+            System.out.println("删除成功！" + lines + "行受影响");
+            return;
+        } catch (SQLException e) {
+            System.out.println("删除失败！");
             e.printStackTrace();
-        } finally {
-            //4、释放资源
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                pstmt = null;
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                connection = null;
+        }
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void update() {
+        Connection connection = getMysqlConnection();
+        if (connection == null) {
+            System.out.println("数据库连接失败！");
+            return;
+        }
+        String sql = "UPDATE people SET name=?,addr=?,age=? WHERE id=?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, "猪八戒");
+            ps.setString(2, "高老庄");
+            ps.setInt(3, 34);
+            ps.setInt(4, 1);
+            int lines = ps.executeUpdate();
+            ps.close();
+            connection.close();
+            System.out.println("更新成功！" + lines + "行受影响");
+            return;
+        } catch (SQLException e) {
+            System.out.println("更新失败");
+            e.printStackTrace();
+        }
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }
 
-    public void testDelete() {
-        Connection connection = null;
-        PreparedStatement pstmt = null;
-        //1、注册驱动
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            //2、获得连接,通过DriverManager获得连接
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/srm", "root", "123456");
-            //3、执行sql
-            //3.1 定义sql
-            String sql = "DELETE FROM people WHERE id=?";
-            //3.2 获得PreparedStatement
-            pstmt = connection.prepareStatement(sql);
-            //3.3设置参数
-
-            pstmt.setLong(1, 5);
-            //3.4执行sql,增删改用executeUpdate
-            int lines = pstmt.executeUpdate();//收影响的行数
-            if (lines > 0) {
-                System.out.println("删除成功");
-            } else {
-                System.out.println("删除失败");
-            }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
-            //4、释放资源
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                pstmt = null;
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                connection = null;
-            }
+    private static void query() {
+        Connection connection = getMysqlConnection();
+        if (connection == null) {
+            System.out.println("数据库连接失败！");
+            return;
         }
-    }
-
-    public void testQuery() {
-        Connection connection = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        //1、注册驱动
+        String sql = "SELECT * FROM people WHERE age=?";
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            //2、获得连接,通过DriverManager获得连接
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/srm", "root", "123456");
-            //3、执行sql
-            //3.1 定义sql
-            String sql = "SELECT * FROM people WHERE id>?";
-            //3.2 获得PreparedStatement
-            pstmt = connection.prepareStatement(sql);
-            //3.3设置参数
-
-            pstmt.setLong(1, 1);
-            //3.4执行sql,增删改用executeQuery
-            rs = pstmt.executeQuery();
-            //3.5迭代结果集
-            while (rs.next()) {
-                Long id = rs.getLong(1);//获得id
-                String name = rs.getString(2);//获得name
-                String birthday = rs.getString(3);
-                System.out.println(id + "," + name + "," + birthday);
-
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setLong(1,34);
+            ResultSet resultSet = ps.executeQuery();
+            while(resultSet.next()){
+                System.out.println(resultSet.getString(2));
             }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
+            ps.close();
+            connection.close();
+            return;
+        } catch (SQLException e) {
+            System.out.println("查询失败！");
             e.printStackTrace();
-        } finally {
-            //4、释放资源
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                rs = null;
-            }
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                pstmt = null;
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                connection = null;
+        }
+        if(connection!=null){
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }

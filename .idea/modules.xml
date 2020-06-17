@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/curriculumDesig.iml" filepath="$PROJECT_DIR$/curriculumDesig.iml" />
+      <module fileurl="file://$PROJECT_DIR$/curriculumDesign.iml" filepath="$PROJECT_DIR$/curriculumDesign.iml" />
+      <module fileurl="file://$PROJECT_DIR$/drawing/drawing.iml" filepath="$PROJECT_DIR$/drawing/drawing.iml" />
       <module fileurl="file://$PROJECT_DIR$/jdbc/jdbc.iml" filepath="$PROJECT_DIR$/jdbc/jdbc.iml" />
       <module fileurl="file://$PROJECT_DIR$/telephoneBook/telephoneBook.iml" filepath="$PROJECT_DIR$/telephoneBook/telephoneBook.iml" />
     </modules>
