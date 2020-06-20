@@ -1,6 +1,7 @@
 package com.curriculumDesign.telephoneBook;
 
-import com.curriculumDesign.telephoneBook.ui.MainFrame;
+import com.curriculumDesign.telephoneBook.ui.frame.LoginFrame;
+import com.curriculumDesign.telephoneBook.ui.frame.MainFrame;
 
 /**
  * @ Author: MaCode
@@ -10,12 +11,12 @@ import com.curriculumDesign.telephoneBook.ui.MainFrame;
 public class Main {
     public static void main(String[] args) {
         try {
-            Class.forName("com.curriculumDesign.telephoneBook.setting.Setting");
-            Class.forName("com.curriculumDesign.telephoneBook.dataBaseService.DataBaseService");
+            Class.forName("com.curriculumDesign.telephoneBook.service.baseService.SetService");
+            Class.forName("com.curriculumDesign.telephoneBook.service.baseService.DataService");
             Class.forName("com.curriculumDesign.telephoneBook.service.Service");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        new MainFrame();
+        new LoginFrame();
     }
 }

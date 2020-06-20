@@ -1,9 +1,11 @@
 package com.curriculumDesign.telephoneBook.service;
 
-import com.curriculumDesign.telephoneBook.dataBaseService.DataBaseService;
 import com.curriculumDesign.telephoneBook.model.Friend;
-import com.curriculumDesign.telephoneBook.setting.Setting;
-import com.curriculumDesign.telephoneBook.ui.Inputable;
+import com.curriculumDesign.telephoneBook.model.Inputable;
+import com.curriculumDesign.telephoneBook.model.User;
+import com.curriculumDesign.telephoneBook.service.baseService.DataService;
+import com.curriculumDesign.telephoneBook.service.baseService.NetworkService;
+import com.curriculumDesign.telephoneBook.service.baseService.SetService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,9 +20,30 @@ import java.util.*;
 public class Service {
     private static Service instance = new Service();
 
-    private DataBaseService dataService = DataBaseService.getInstance();
-    private Setting setting = Setting.getInstance();
-    private ResourceBundle rb = setting.getResourceBundle();
+    private NetworkService networkService = NetworkService.getInstance();
+    private DataService dataService = DataService.getInstance();
+    private SetService setService = SetService.getInstance();
+
+    private ResourceBundle rb = setService.getResourceBundle();
+    private String nowPage;
+    private Friend nowFriend;
+    private boolean NetWork = true;
+
+    public Friend getNowFriend() {
+        return nowFriend;
+    }
+
+    public void setNowFriend(Friend nowFriend) {
+        this.nowFriend = nowFriend;
+    }
+
+    public String getNowPage() {
+        return nowPage;
+    }
+
+    public void setNowPage(String nowPage) {
+        this.nowPage = nowPage;
+    }
 
     private Service() {
     }
@@ -34,20 +57,52 @@ public class Service {
         return rb.getString(text);
     }
 
-    public String getIconPath(){
-        return this.setting.getIconPath();
+    public String getIconPath() {
+        return this.setService.getIconPath();
     }
 
-    public void addFriend(Friend friend) {
-        this.dataService.addFriend(friend);
+    public int login(User user) {
+        return this.networkService.login(user);
     }
 
-    public void delete(Friend friend) {
-        System.out.println(this.dataService.deleteFriend(friend));
+    public void logout() {
+        if (this.NetWork) this.networkService.logout();
+    }
+
+    public boolean addFriend(Friend friend) {
+        boolean res = true;
+        if (this.NetWork) res = (networkService.insert(friend) == 1);
+        if (res) res = this.dataService.addFriend(friend);
+        return res;
+    }
+
+    public boolean delete(Friend friend) {
+        boolean res = true;
+        if (this.NetWork) res = (networkService.delete(friend) == 1);
+        if (res) res = this.dataService.deleteFriend(friend);
+        return res;
+    }
+
+    public boolean update(Friend friend) {
+        boolean res = true;
+        if (this.NetWork) res = (networkService.update(friend) == 1);
+        if (res) res = this.dataService.update(friend);
+        return res;
     }
 
     public LinkedList<Friend> getAllFriend() {
         return this.dataService.getAllFriend();
+    }
+
+    public boolean downloadData() {
+        LinkedList<Friend> data = this.networkService.getFriends();
+        if (data == null) return false;
+        this.dataService.setData(data);
+        return true;
+    }
+
+    public void NotNetwork() {
+        this.NetWork = false;
     }
 
     public HashMap<String, LinkedList<Friend>> getFriendByGroup() {
@@ -75,7 +130,7 @@ public class Service {
         return res;
     }
 
-    public List<Friend> searchNumber(String num) {
+    public List<Friend> searchTelephone(String num) {
         List<Friend> res = new LinkedList<>();
         for (Friend friend : this.dataService.getAllFriend()) {
             for (String number : friend.getNumber()) {
@@ -108,6 +163,49 @@ public class Service {
         return res;
     }
 
+    private int createId() {
+        LinkedList<Friend> all = this.dataService.getAllFriend();
+        boolean[] id = new boolean[100000];
+        for (Friend friend : all) {
+            id[friend.getId()] = true;
+        }
+        for (int i = 0; i < id.length; i++) {
+            if (!id[i]) return i;
+        }
+        return -1;
+    }
+
+    public Friend newFriend(HashMap<String, LinkedList<String>> attribute) {
+        if (attribute.get("telephone").size() == 0) {
+            attribute.get("telephone").add("");
+        }
+        if (attribute.get("email").size() == 0) {
+            attribute.get("email").add("");
+        }
+        if (attribute.get("other").size() == 0) {
+            attribute.get("other").add("");
+        }
+        if (attribute.get("group").size() == 0) {
+            attribute.get("group").add(this.getText("noGroup"));
+        }
+        return new Friend(
+                attribute.get("name"),
+                attribute.get("telephone"),
+                attribute.get("email"),
+                attribute.get("other"),
+                attribute.get("group")
+        );
+    }
+
+
+    public Friend createFriend(HashMap<String, LinkedList<String>> attribute) {
+        int id = this.createId();
+        Friend friend = this.newFriend(attribute);
+        friend.setId(id);
+        System.out.println(friend);
+        return friend;
+    }
+
     public HashMap<String, LinkedList<String>> inputsToMap(LinkedList<Inputable> inputs) {
         HashMap<String, LinkedList<String>> attribute = new HashMap<>();
         for (Inputable inputable : inputs) {
@@ -124,18 +222,18 @@ public class Service {
     }
 
     public LinkedList<String> getAllLanguage() {
-        LinkedList<String> res = new LinkedList<>(Arrays.asList(this.setting.getLanguages()));
-        res.remove(this.setting.getLanguage());
-        res.addFirst(this.setting.getLanguage());
+        LinkedList<String> res = new LinkedList<>(Arrays.asList(this.setService.getLanguages()));
+        res.remove(this.setService.getLanguage());
+        res.addFirst(this.setService.getLanguage());
         return res;
     }
 
     public boolean setLanguage(String string) {
         if (string == null) return false;
-        String[] languages = this.setting.getLanguages();
+        String[] languages = this.setService.getLanguages();
         for (int i = 0; i < languages.length; i++) {
             if (string.equals(languages[i])) {
-                return this.setting.setLanguage(i);
+                return this.setService.setLanguage(i);
             }
         }
         return false;
@@ -150,17 +248,17 @@ public class Service {
 
     public boolean derived() {
         LinkedList<Friend> friends = this.dataService.getAllFriend();
-        File file = new File(this.setting.getDerivedPath());
+        File file = new File(this.setService.getDerivedPath());
         if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
         try {
             PrintWriter pw = new PrintWriter(new FileOutputStream(file));
             for (Friend friend : friends) {
                 HashMap<String, LinkedList<String>> attribute = this.friendToMap(friend);
-                String[] keys = new String[]{"name","telephone","email","other","group"};
-                for(String key : keys){
+                String[] keys = new String[]{"name", "telephone", "email", "other", "group"};
+                for (String key : keys) {
                     this.print(this.getText(key), attribute.get(key), pw);
                 }
-                pw.println();
+                pw.println("==========================");
             }
             pw.close();
         } catch (Exception e) {

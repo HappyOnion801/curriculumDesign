@@ -1,10 +1,7 @@
 package com.curriculumDesign.telephoneBook.model;
 
-import com.curriculumDesign.telephoneBook.ui.FriendItem;
-
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.Random;
 
 /**
  * @ Author: MaCode
@@ -13,47 +10,39 @@ import java.util.Random;
  */
 public class Friend implements Serializable {
     private static final long serialVersionUID = 2935986423648346564L;
+
+    private int id;
     private String name;
-    private LinkedList<String> number;
-    private LinkedList<String> email;
+    private String telephone;
+    private String email;
     private String other;
     private String group;
-    private String id;
 
-    private Friend() {
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-        for (int i = 0; i < 128; i++) {
-            sb.append(random.nextInt(10));
-        }
-        this.id = sb.toString();
-    }
-
-    public Friend(String name, String number, String email, String other, String group) {
-        this();
+    public Friend(int id, String name, String number, String email, String other, String group) {
+        this.id = id;
         this.name = name;
-        this.number = new LinkedList<>();
-        this.email = new LinkedList<>();
+        this.telephone = number;
+        this.email = email;
         this.other = other;
         this.group = group;
-        this.email.add(email);
-        this.number.add(number);
     }
 
-    public Friend(LinkedList<String> name,LinkedList<String> telephone,LinkedList<String> email,LinkedList<String> other,LinkedList<String> group){
-        this();
-        this.name = name.getFirst();
-        this.number = telephone;
-        this.email = email;
-        this.other = other.getFirst();
-        this.group = group.getFirst();
+    public Friend(LinkedList<String> name, LinkedList<String> telephone, LinkedList<String> email, LinkedList<String> other, LinkedList<String> group) {
+        this(
+                -1,
+                name.getFirst(),
+                telephone.getFirst(),
+                email.getFirst(),
+                other.getFirst(),
+                group.getFirst()
+        );
     }
 
     @Override
     public String toString() {
         return "Friend{" +
                 "name='" + name + '\'' +
-                ", number='" + number + '\'' +
+                ", telephone='" + telephone + '\'' +
                 ", email='" + email + '\'' +
                 ", other='" + other + '\'' +
                 ", group='" + group + '\'' +
@@ -67,15 +56,23 @@ public class Friend implements Serializable {
 
 
     public LinkedList<String> getNumber() {
-        return number;
+        LinkedList<String> res = new LinkedList<>();
+        res.add(this.telephone);
+        return res;
     }
 
     public LinkedList<String> getEmail() {
-        return email;
+        LinkedList<String> res = new LinkedList<>();
+        res.add(this.email);
+        return res;
     }
 
-    public void setEmail(LinkedList<String> email) {
-        this.email = email;
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getOther() {
@@ -86,23 +83,12 @@ public class Friend implements Serializable {
         return group;
     }
 
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    public String getId(){
-        return this.id;
-    }
-
     @Override
-    public boolean equals(Object o) {
-        if (o == null) return false;
-        if(o instanceof Friend){
-            Friend f = (Friend) o;
-            return this.id.equals(f.getId());
-        }else if(o instanceof FriendItem){
-            FriendItem fi = (FriendItem) o;
-            return fi.equals(this);
+    public boolean equals(Object object) {
+        if (object == null) return false;
+        if (object instanceof Friend) {
+            Friend friend = (Friend) object;
+            return this.id == friend.getId();
         }
         return false;
     }

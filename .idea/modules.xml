@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/curriculumDesign.iml" filepath="$PROJECT_DIR$/curriculumDesign.iml" />
       <module fileurl="file://$PROJECT_DIR$/drawing/drawing.iml" filepath="$PROJECT_DIR$/drawing/drawing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fruitMarket/fruitMarket.iml" filepath="$PROJECT_DIR$/fruitMarket/fruitMarket.iml" />
       <module fileurl="file://$PROJECT_DIR$/jdbc/jdbc.iml" filepath="$PROJECT_DIR$/jdbc/jdbc.iml" />
       <module fileurl="file://$PROJECT_DIR$/telephoneBook/telephoneBook.iml" filepath="$PROJECT_DIR$/telephoneBook/telephoneBook.iml" />
     </modules>
