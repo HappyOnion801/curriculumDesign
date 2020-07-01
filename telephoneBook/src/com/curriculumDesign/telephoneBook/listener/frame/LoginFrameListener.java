@@ -8,8 +8,12 @@ import com.curriculumDesign.telephoneBook.ui.panel.InputItem;
 import com.curriculumDesign.telephoneBook.ui.panel.LabelItem;
 import com.curriculumDesign.telephoneBook.ui.panel.PasswordItem;
 
+import javax.imageio.ImageIO;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * @ Author: MaCode
@@ -38,8 +42,15 @@ public class LoginFrameListener implements WindowListener {
         ButtonItem login = new ButtonItem(this.loginFrame.getWidth(), this.service.getText("login"));
         login.setButtonListener(new LoginButtonListener(this.loginFrame));
 
+
         this.loginFrame.getShowPanel().addItem(login);
-        this.loginFrame.repaint();
+        this.loginFrame.setTitle(this.service.getText("login"));
+        try {
+            BufferedImage icon = ImageIO.read(new FileInputStream(this.service.getIconPath()));
+            this.loginFrame.setIconImage(icon);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.loginFrame.setVisible(true);
     }
 

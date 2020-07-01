@@ -82,27 +82,27 @@ public class SketchpadPanel extends Canvas implements MouseListener, MouseMotion
         isMousePressing = false;
 
         switch (type) {
-            case LINE:
-                Line line = new Line(beginX, beginY, currentX, currentY, color);
-                currentShapes.push(line);
-                break;
+                        case LINE:
+                            Line line = new Line(beginX, beginY, currentX, currentY, color);
+                            currentShapes.push(line);
+                            break;
 
-            case CIRCLE:
-                int radius = (int) Math
-                        .sqrt((beginX - currentX) * (beginX - currentX) + (beginY - currentY) * (beginY - currentY));
-                Circle circle = new Circle(beginX - radius / 2, beginY - radius / 2, radius, color);
-                currentShapes.push(circle);
-                break;
+                        case CIRCLE:
+                            int radius = (int) Math
+                                    .sqrt((beginX - currentX) * (beginX - currentX) + (beginY - currentY) * (beginY - currentY));
+                            Circle circle = new Circle(beginX - radius / 2, beginY - radius / 2, radius, color);
+                            currentShapes.push(circle);
+                            break;
 
-            case RECTANGLE:
-                Rectangle rectangle;
-                if (currentX < beginX) {
-                    if (currentY < beginY) {
-                        // 左上方
-                        rectangle = new Rectangle(currentX, currentY, beginX - currentX, beginY - currentY, color);
-                    } else { // 左下方
-                        rectangle = new Rectangle(currentX, beginY, beginX - currentX, currentY - beginY, color);
-                    }
+                        case RECTANGLE:
+                            Rectangle rectangle;
+                            if (currentX < beginX) {
+                                if (currentY < beginY) {
+                                    // 左上方
+                                    rectangle = new Rectangle(currentX, currentY, beginX - currentX, beginY - currentY, color);
+                                } else { // 左下方
+                                    rectangle = new Rectangle(currentX, beginY, beginX - currentX, currentY - beginY, color);
+                                }
                 } else {
                     if (currentY < beginY) {
                         // 右上方

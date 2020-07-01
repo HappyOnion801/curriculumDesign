@@ -114,9 +114,8 @@ public class MainFrameListener implements WindowListener {
     public void windowOpened(WindowEvent windowEvent) {
         this.mainFrame.setTitle(this.service.getText("telephoneBook"));
         this.mainFrame.getSearch().setText(this.service.getText("search"));
-        BufferedImage icon;
         try {
-            icon = ImageIO.read(new FileInputStream(this.service.getIconPath()));
+            BufferedImage icon = ImageIO.read(new FileInputStream(this.service.getIconPath()));
             this.mainFrame.setIconImage(icon);
         } catch (IOException e) {
             e.printStackTrace();

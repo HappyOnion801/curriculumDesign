@@ -17,10 +17,10 @@ public class Jdbc {
     private static String password = "123456";
 
     public static void main(String[] args) {
-//        insert();
+        insert();
 //        delete();
 //        update();
-        query();
+//        query();
     }
 
     private static Connection getMysqlConnection() {
@@ -61,6 +61,7 @@ public class Jdbc {
         if (connection != null) {
             try {
                 connection.close();
+                connection = null;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -88,6 +89,7 @@ public class Jdbc {
         }
         try {
             connection.close();
+            connection = null;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -118,6 +120,7 @@ public class Jdbc {
         if (connection != null) {
             try {
                 connection.close();
+                connection = null;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -133,9 +136,9 @@ public class Jdbc {
         String sql = "SELECT * FROM people WHERE age=?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setLong(1,34);
+            ps.setLong(1, 34);
             ResultSet resultSet = ps.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 System.out.println(resultSet.getString(2));
             }
             ps.close();
@@ -145,9 +148,10 @@ public class Jdbc {
             System.out.println("查询失败！");
             e.printStackTrace();
         }
-        if(connection!=null){
+        if (connection != null) {
             try {
                 connection.close();
+                connection = null;
             } catch (SQLException e) {
                 e.printStackTrace();
             }

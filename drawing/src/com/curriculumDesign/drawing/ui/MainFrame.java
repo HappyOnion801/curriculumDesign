@@ -57,7 +57,7 @@ public class MainFrame extends JFrame {
 
         // 初始化设置，颜色和命令
         lineButton.setForeground(Color.RED);
-        sketchPanel.setColor(Color.RED);
+        sketchPanel.setColor(Color.BLACK);
         redButton.setForeground(Color.RED);
         sketchPanel.setShapeType(ShapeTypes.LINE);// 类型为直线
     }
